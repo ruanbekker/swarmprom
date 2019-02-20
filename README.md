@@ -48,6 +48,10 @@ export SLACK_USER=alertmanager
 docker stack deploy -c docker-compose.traefik.yml swarmprom
 ```
 
+TODO:
+- https://docs.minio.io/docs/deploy-minio-on-docker-swarm
+- https://dockerswarm.rocks/swarmpit/
+
 Services:
 
 * prometheus (metrics database) `http://<swarm-ip>:9090`
