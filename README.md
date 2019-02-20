@@ -7,27 +7,46 @@ Swarmprom is a starter kit for Docker Swarm monitoring with [Prometheus](https:/
 [Alert Manager](https://github.com/prometheus/alertmanager)
 and [Unsee](https://github.com/cloudflare/unsee).
 
+Thanks to [Stefan Prodan](https://github.com/stefanprodan/swarmprom)
+
 ## Install
 
-Clone this repository and run the monitoring stack:
+Get the repo:
 
-```bash
-$ git clone https://github.com/stefanprodan/swarmprom.git
-$ cd swarmprom
-
-ADMIN_USER=admin \
-ADMIN_PASSWORD=admin \
-SLACK_URL=https://hooks.slack.com/services/TOKEN \
-SLACK_CHANNEL=devops-alerts \
-SLACK_USER=alertmanager \
-docker stack deploy -c docker-compose.yml mon
+```
+git clone https://github.com/ruanbekker/swarmprom.git
+cd swarmprom
 ```
 
-Prerequisites:
+Deploy Consul and Traefik Stack:
 
-* Docker CE 17.09.0-ce or Docker EE 17.06.2-ee-3
-* Swarm cluster with one manager and a worker node
-* Docker engine experimental enabled and metrics address set to `0.0.0.0:9323`
+```bash
+export EMAIL=admin@example.com
+export DOMAIN=example.com
+export USERNAME=admin
+export PASSWORD=changethis
+export HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD)
+export CONSUL_REPLICAS=3
+export TRAEFIK_REPLICAS=$(docker node ls -q | wc -l)
+
+docker network create --driver=overlay traefik-public
+docker stack deploy -c docker-compose.traefik-standalone.yml traefik-consul
+```
+
+Deploy the monitoring stack
+
+```bash
+export ADMIN_USER=admin
+export ADMIN_PASSWORD=changethis
+echo $HASHED_PASSWORD # should still be in env.
+export DOMAIN=example.com
+export TRAEFIK_PUBLIC_TAG=traefik-public
+export SLACK_URL=https://hooks.slack.com/services/TOKEN
+export SLACK_CHANNEL=system_events
+export SLACK_USER=alertmanager
+
+docker stack deploy -c docker-compose.traefik.yml swarmprom
+```
 
 Services:
 
@@ -56,13 +75,6 @@ These instructions assume you already have Traefik set up following that guide a
 * Filtering to only serve containers with a tag `traefik-public`.
 
 ### Instructions
-
-* Clone this repository and enter into the directory:
-
-```bash
-$ git clone https://github.com/stefanprodan/swarmprom.git
-$ cd swarmprom
-```
 
 * Set and export an `ADMIN_USER` environment variable:
 
