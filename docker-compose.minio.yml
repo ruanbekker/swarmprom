@@ -1,0 +1,146 @@
+version: '3.1'
+
+services:
+  minio1:
+    image: minio/minio:RELEASE.2019-02-14T00-21-45Z
+    hostname: minio1
+    volumes:
+      - minio1-data:/export
+    networks:
+      - minio_distributed
+      - traefik-public
+    deploy:
+      restart_policy:
+        delay: 10s
+        max_attempts: 10
+        window: 60s
+      placement:
+        constraints:
+          - node.labels.minio1==true
+      labels:
+        - traefik.frontend.rule=Host:objects.example.com
+        - traefik.enable=true
+        - traefik.port=9000
+        - traefik.tags=traefik-public
+        - traefik.docker.network=traefik-public
+        # Traefik service that listens to HTTP
+        - traefik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        # Traefik service that listens to HTTPS
+        - traefik.webservice.frontend.entryPoints=https
+    command: server http://minio1/export http://minio2/export http://minio3/export http://minio4/export
+    secrets:
+      - secret_key
+      - access_key
+
+  minio2:
+    image: minio/minio:RELEASE.2019-02-14T00-21-45Z
+    hostname: minio2
+    volumes:
+      - minio2-data:/export
+    networks:
+      - minio_distributed
+      - traefik-public
+    deploy:
+      restart_policy:
+        delay: 10s
+        max_attempts: 10
+        window: 60s
+      placement:
+        constraints:
+          - node.labels.minio2==true
+      labels:
+        - traefik.frontend.rule=Host:objects.example.com
+        - traefik.enable=true
+        - traefik.port=9000
+        - traefik.tags=traefik-public
+        - traefik.docker.network=traefik-public
+        # Traefik service that listens to HTTP
+        - traefik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        # Traefik service that listens to HTTPS
+        - traefik.webservice.frontend.entryPoints=https
+    command: server http://minio1/export http://minio2/export http://minio3/export http://minio4/export
+    secrets:
+      - secret_key
+      - access_key
+
+  minio3:
+    image: minio/minio:RELEASE.2019-02-14T00-21-45Z
+    hostname: minio3
+    volumes:
+      - minio3-data:/export
+    networks:
+      - minio_distributed
+      - traefik-public
+    deploy:
+      restart_policy:
+        delay: 10s
+        max_attempts: 10
+        window: 60s
+      placement:
+        constraints:
+          - node.labels.minio3==true
+      labels:
+        - traefik.frontend.rule=Host:objects.example.com
+        - traefik.enable=true
+        - traefik.port=9000
+        - traefik.tags=traefik-public
+        - traefik.docker.network=traefik-public
+        # Traefik service that listens to HTTP
+        - traefik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        # Traefik service that listens to HTTPS
+        - traefik.webservice.frontend.entryPoints=https
+    command: server http://minio1/export http://minio2/export http://minio3/export http://minio4/export
+    secrets:
+      - secret_key
+      - access_key
+  minio4:
+    image: minio/minio:RELEASE.2019-02-14T00-21-45Z
+    hostname: minio4
+    volumes:
+      - minio4-data:/export
+    networks:
+      - minio_distributed
+      - traefik-public
+    deploy:
+      restart_policy:
+        delay: 10s
+        max_attempts: 10
+        window: 60s
+      placement:
+        constraints:
+          - node.labels.minio3==true
+      labels:
+        - traefik.frontend.rule=Host:objects.example.com
+        - traefik.enable=true
+        - traefik.port=9000
+        - traefik.tags=traefik-public
+        - traefik.docker.network=traefik-public
+        # Traefik service that listens to HTTP
+        - traefik.redirectorservice.frontend.entryPoints=http
+        - traefik.redirectorservice.frontend.redirect.entryPoint=https
+        # Traefik service that listens to HTTPS
+        - traefik.webservice.frontend.entryPoints=https
+    command: server http://minio1/export http://minio2/export http://minio3/export http://minio4/export
+    secrets:
+      - secret_key
+      - access_key
+volumes:
+  minio1-data:
+  minio2-data:
+  minio3-data:
+  minio4-data:
+
+networks:
+  minio_distributed:
+    driver: overlay
+  traefik-public:
+    external: true
+
+secrets:
+  secret_key:
+    external: true
+  access_key:
+    external: true
