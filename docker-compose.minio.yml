@@ -18,7 +18,7 @@ services:
         constraints:
           - node.labels.minio1==true
       labels:
-        - traefik.frontend.rule=Host:objects.example.com
+        - traefik.frontend.rule=Host:objects.${DOMAIN}
         - traefik.enable=true
         - traefik.port=9000
         - traefik.tags=traefik-public
@@ -50,7 +50,7 @@ services:
         constraints:
           - node.labels.minio2==true
       labels:
-        - traefik.frontend.rule=Host:objects.example.com
+        - traefik.frontend.rule=Host:objects.${DOMAIN}
         - traefik.enable=true
         - traefik.port=9000
         - traefik.tags=traefik-public
@@ -82,7 +82,7 @@ services:
         constraints:
           - node.labels.minio3==true
       labels:
-        - traefik.frontend.rule=Host:objects.example.com
+        - traefik.frontend.rule=Host:objects.${DOMAIN}
         - traefik.enable=true
         - traefik.port=9000
         - traefik.tags=traefik-public
@@ -111,9 +111,9 @@ services:
         window: 60s
       placement:
         constraints:
-          - node.labels.minio3==true
+          - node.labels.minio4==true 
       labels:
-        - traefik.frontend.rule=Host:objects.example.com
+        - traefik.frontend.rule=Host:objects.${DOMAIN}
         - traefik.enable=true
         - traefik.port=9000
         - traefik.tags=traefik-public
