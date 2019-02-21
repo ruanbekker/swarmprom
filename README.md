@@ -48,9 +48,23 @@ export SLACK_USER=alertmanager
 docker stack deploy -c docker-compose.traefik.yml swarmprom
 ```
 
-TODO:
-- https://docs.minio.io/docs/deploy-minio-on-docker-swarm
-- https://dockerswarm.rocks/swarmpit/
+Deploy the Minio Stack for Object Storage:
+
+```
+echo "AKIAIOSFODNN7EXAMPLE" | docker secret create access_key -
+echo "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY" | docker secret create secret_key -
+
+docker node update --label-add minio1=true <DOCKER-NODE1>
+docker node update --label-add minio2=true <DOCKER-NODE2>
+docker node update --label-add minio3=true <DOCKER-NODE3>
+docker node update --label-add minio4=true <DOCKER-NODE4>
+
+docker stack deploy -c docker-compose.minio.yaml minio_stack
+```
+
+More about [Minio](https://docs.minio.io/docs/deploy-minio-on-docker-swarm)
+
+For a Swarm-UI see [SwarmPit](https://dockerswarm.rocks/swarmpit/)
 
 Services:
 
